@@ -220,6 +220,11 @@ footer h2{font-family:var(--serif);font-weight:400;font-size:clamp(3.4rem,11vw,1
   .luke{grid-template-columns:1fr}
   .luke-photo{max-width:330px;margin:0 auto}
 }
+@media(max-width:640px){
+  /* small phones: keep brand + Let's talk + theme toggle, drop plain links */
+  .toplinks a:not(.cta){display:none}
+  .brand .sep,.brand{white-space:nowrap}
+}
 
 /* ============ PAGE OPENING: PRELOADER + CURTAIN ============ */
 #loader{position:fixed;inset:0;z-index:2000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease,visibility .5s}
