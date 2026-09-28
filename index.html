@@ -253,10 +253,11 @@ footer h2{font-family:var(--serif);font-weight:400;font-size:clamp(3.4rem,11vw,1
 /* ============ PAGE OPENING: PRELOADER + CURTAIN ============ */
 #loader{position:fixed;inset:0;z-index:2000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease,visibility .5s}
 #loader.done{opacity:0;visibility:hidden}
-#loader .word{position:relative;color:#fff;font-weight:600;font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:.42em;text-indent:.42em;animation:wordIn .9s cubic-bezier(.19,1,.22,1) both}
-#loader .word .echo{position:absolute;inset:0;color:var(--green);opacity:0;animation:wordInEcho 1.1s .25s cubic-bezier(.19,1,.22,1) both;pointer-events:none}
-@keyframes wordIn{from{opacity:0;transform:translateY(46px);filter:blur(14px)}to{opacity:1;transform:none;filter:blur(0)}}
-@keyframes wordInEcho{0%{opacity:0;transform:translateY(60px);filter:blur(18px)}60%{opacity:.85}100%{opacity:0;transform:translateY(-14px);filter:blur(6px)}}
+#loader .word{position:relative;color:#fff;font-weight:300;font-size:clamp(2.4rem,10.5vw,8rem);letter-spacing:.06em;white-space:nowrap;line-height:1}
+#loader .word>span{display:inline-block;animation:wordIn 1.5s cubic-bezier(.2,.7,.2,1) both}
+#loader .word .echo{position:absolute;inset:0;color:var(--green);opacity:.55;pointer-events:none;animation:wordInEcho 1.5s cubic-bezier(.2,.7,.2,1) .12s both}
+@keyframes wordIn{from{opacity:0;transform:translateY(48px);filter:blur(18px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes wordInEcho{from{opacity:0;transform:translateY(48px);filter:blur(22px)}to{opacity:.55;transform:none;filter:blur(14px)}}
 #curtain{position:fixed;inset:0;z-index:1999;pointer-events:none;display:flex}
 #curtain span{flex:1;background:repeating-linear-gradient(90deg,#0ae448 0 3px,#062b12 3px 7px);transform:scaleY(1);transform-origin:top;transition:transform .8s cubic-bezier(.7,0,.3,1)}
 #curtain span:nth-child(2n){transition-delay:.04s}
@@ -288,6 +289,8 @@ body.loaded .topbar{animation:barIn .8s ease .55s both}
 .toplinks a.cta .hl{position:relative;display:inline-block}
 .toplinks a.cta .hl::after{content:'';position:absolute;left:-.5em;right:-.5em;top:-.3em;bottom:-.3em;border:2px solid var(--green);border-radius:50%;transform:scale(.6);opacity:0;transition:transform .28s cubic-bezier(.2,.7,.3,1.2),opacity .22s;pointer-events:none}
 .toplinks a.cta:hover .hl::after{transform:scale(1);opacity:1}
+
+
 
 /* ============ PILL CURSOR-TRACKED BLOB FILL ============ */
 .pill{position:relative;overflow:hidden;isolation:isolate}
@@ -344,8 +347,7 @@ body.loaded .topbar{animation:barIn .8s ease .55s both}
 </style>
 </head>
 <body>
-<div id="loader" aria-hidden="true"><div class="word"><span>AHMAD SHEIKH</span><span
-class="echo" aria-hidden="true">AHMAD SHEIKH</span></div></div>
+<div id="loader" aria-hidden="true"><div class="word"><span>AHMAD SHEIKH</span><span class="echo" aria-hidden="true">AHMAD SHEIKH</span></div></div>
 <div id="curtain" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="sweep"></div></div>
 <div id="cursor" aria-hidden="true"></div>
 <div id="caseBadge" aria-hidden="true">View<br>project ↗</div>
