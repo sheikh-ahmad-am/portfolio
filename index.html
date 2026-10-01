@@ -158,6 +158,12 @@ h2.st .serif{letter-spacing:0}
 .lc-hover{cursor:crosshair}
 .lc-zero{stroke:var(--body);stroke-width:1;stroke-dasharray:5 4;opacity:.7}
 .lc-bar.neg{fill:var(--chart-neg);transform-origin:top}
+.lc-hbar{fill:var(--chart-bar);transform:scaleX(0);transform-box:fill-box;transform-origin:left center;transition:transform .8s cubic-bezier(.22,1,.36,1);cursor:pointer}
+.live-chart.played .lc-hbar{transform:scaleX(1)}
+.lc-hbar.neg{fill:var(--chart-neg);transform-origin:right center}
+.lc-hbar:hover{filter:brightness(1.25)}
+.lc-hlabel{fill:var(--body);font-size:12px}
+.lc-hval{fill:var(--headline);font-size:12px;font-weight:600}
 .lc-warn{color:var(--chart-alert);font-weight:600}
 .live-stat{position:relative;padding:1.4rem 1.2rem .4rem}
 .lc-stat-row{display:flex;align-items:center;justify-content:space-around;gap:1rem;flex-wrap:wrap;margin-bottom:1.1rem}
@@ -507,6 +513,16 @@ body.loaded .topbar{animation:barIn .8s ease .55s both}
       <p class="work-desc">Which customer segments are churning, why, and where should limited retention effort go first? Across 5,000 SaaS customers: 22.9% churn, the Startup plan worst at 29.3%, and a 3.0x LTV:CAC case for saving them.</p>
       <div class="work-media"><div class="live-chart" id="chart-churn" role="img" aria-label="Interactive line chart: month-over-month churn rate climbing from 0.9 percent in November 2025 to 6.6 percent in August 2026. Hover for monthly values."></div><p class="lc-cap">Live chart · MoM churn rate · 5,000 customers · hover for values</p></div>
       <div class="work-foot"><span class="tags">SQL · PYTHON · POWER BI</span><a class="u-link" href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7510201687337320448" target="_blank" rel="noopener">Watch walkthrough</a></div>
+    </article>
+
+    <article class="work reveal">
+      <div class="work-head">
+        <div><span class="chip">GLOBAL WELLBEING · SQL · PYTHON</span><h3>World Happiness Analytics</h3></div>
+        <a class="u-link" href="https://github.com/sheikh-ahmad-am/effective-happiness" target="_blank" rel="noopener">View project</a>
+      </div>
+      <p class="work-desc">World Happiness Report 2015–2025 — 1,657 country-years across 197 countries. An OLS regression (R² = 0.831) ranks the six happiness drivers: a 1-SD lift in social support moves happiness 3× more than GDP. Serbia climbed +1.48 since 2015; Afghanistan fell −2.21. The pipeline re-pulls data and refreshes every KPI automatically.</p>
+      <div class="work-media"><div class="live-chart" id="chart-happiness" role="img" aria-label="Interactive horizontal bar chart: standardized effect of each happiness factor on national ladder score. Social support leads at plus 0.464, generosity trails at minus 0.025. Hover the bars for values."></div><p class="lc-cap">Live chart · standardized OLS factor effects · R² = 0.831 · hover the bars</p></div>
+      <div class="work-foot"><span class="tags">SQL · PYTHON · SCIKIT-LEARN</span><a class="u-link" href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7511301668160987137" target="_blank" rel="noopener">Watch walkthrough</a></div>
     </article>
 
     <article class="work reveal">
@@ -1130,6 +1146,54 @@ toTop.addEventListener('click', () => scrollToTarget(0));
         requestAnimationFrame(fr);
       });
     });
+  })();
+
+  /* ----- World Happiness: standardized OLS factor effects (real repo data) ----- */
+  (function(){
+    const el = document.getElementById('chart-happiness');
+    if (!el) return;
+    // standardized OLS coefficients: effect of +1 SD in factor on ladder score
+    const labels = ['Social support', 'Freedom', 'Health', 'GDP', 'Trust', 'Generosity'];
+    const vals = [0.464, 0.278, 0.205, 0.137, 0.094, -0.025];
+    const n = vals.length;
+    const W = 720, H = 400, padL = 150, padR = 70, padT = 18, padB = 20;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const minV = -0.1, maxV = 0.55;
+    const X = function(v){ return padL + ((v - minV) / (maxV - minV)) * plotW; };
+    const X0 = X(0);
+    const rowH = plotH / n;
+    const svg = makeSvg(W, H);
+    el.insertBefore(svg, el.firstChild);
+    [0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(function(v){
+      N('line', { x1: X(v), y1: padT, x2: X(v), y2: H - padB, 'class': 'lc-grid' }, svg);
+      svgText(svg, X(v), H - 6, '+' + v.toFixed(1), 'lc-xlabel', 'middle');
+    });
+    N('line', { x1: X0, y1: padT, x2: X0, y2: H - padB, 'class': 'lc-zero' }, svg);
+    const tip = makeTip(el);
+    vals.forEach(function(v, i){
+      const pos = v >= 0;
+      const y = padT + i * rowH + rowH * 0.22;
+      const h = rowH * 0.56;
+      const x = pos ? X0 : X(v);
+      const w = Math.abs(X(v) - X0);
+      const r = N('rect', {
+        x: x.toFixed(1), y: y.toFixed(1),
+        width: Math.max(w, 2).toFixed(1), height: h.toFixed(1),
+        rx: 3, 'class': 'lc-hbar' + (pos ? '' : ' neg')
+      }, svg);
+      r.style.transitionDelay = (i * 90) + 'ms';
+      const sign = v < 0 ? '\u2212' : '+';
+      r.addEventListener('mouseenter', function(e){
+        tip.show(e.clientX, e.clientY, '<b>' + labels[i] + '</b><br>' + sign + Math.abs(v).toFixed(3) + ' ladder per +1 SD');
+      });
+      r.addEventListener('mouseleave', function(){ tip.hide(); });
+      svgText(svg, padL - 10, y + h / 2 + 4, labels[i], 'lc-hlabel', 'end');
+      const vx = pos ? X(v) + 8 : X(v) - 8;
+      svgText(svg, vx.toFixed(1), y + h / 2 + 4, sign + Math.abs(v).toFixed(3), 'lc-hval', pos ? 'start' : 'end');
+    });
+    const nt = svgText(svg, X0 + 6, padT + 6, 'strongest driver', 'lc-peak-tag', 'start');
+    nt.style.textAnchor = 'start';
+    observePlay(el);
   })();
 })();
 </script>
