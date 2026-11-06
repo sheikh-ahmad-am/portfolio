@@ -15,7 +15,10 @@ function __tsReady() {
   __wid = turnstile.render('#ts', {
     sitekey: '0x4AAAAAAF2Y1RQE0rTaZ8Kk',
     theme: 'dark',
-    callback: function(token) { if (window.ReaderBridge) ReaderBridge.onToken(token); },
+    callback: function(token) {
+      if (window.ReaderBridge) { ReaderBridge.onToken(token); }
+      else { location.replace('readerpro://captcha#t=' + encodeURIComponent(token)); }
+    },
     'error-callback': function() { if (window.ReaderBridge) ReaderBridge.onError(); },
     'expired-callback': function() { if (window.ReaderBridge) ReaderBridge.onExpired(); }
   });
